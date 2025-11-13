@@ -1,0 +1,114 @@
+// ========================== BACKEND (Node.js + Express) ==========================
+
+// --- server.js ---
+const express = require("express");
+const cors = require("cors");
+const os = require("os");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Hello from AWS Backend!",
+    hostname: os.hostname(),
+  });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
+
+/*
+To run backend:
+> cd backend
+> npm init -y
+> npm install express cors
+> node server.js
+*/
+
+// --- backend/package.json example ---
+/*
+{
+  "name": "aws-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}
+*/
+
+
+// ========================== FRONTEND (React App) ==========================
+
+// --- frontend/src/App.js ---
+import React, { useEffect, useState } from "react";
+
+function App() {
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    fetch("http://YOUR-BACKEND-ALB-DNS-OR-IP/") // Replace with your backend ALB DNS or EC2 IP
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>🚀 AWS Full Stack Deployment</h1>
+      <h3>{data.message}</h3>
+      <p>Served by: {data.hostname}</p>
+    </div>
+  );
+}
+
+export default App;
+
+
+// --- frontend/src/index.js ---
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+
+// --- frontend/public/index.html ---
+/*
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AWS Full Stack Deployment</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+*/
+
+// --- frontend/package.json example ---
+/*
+{
+  "name": "aws-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  }
+}
+*/
